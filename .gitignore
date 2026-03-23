@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.DS_Store
+data/bsc_mag4.csv
+*.egg-info/
+dist/
+build/
+.env
