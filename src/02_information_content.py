@@ -57,7 +57,8 @@ def run_information_content():
     print(f"Orion: ratio={orion_ratio:.4f}, angle={orion_angle:.2f}°")
     print(f"Delta: ratio={abs(giza_ratio-orion_ratio):.4f}, angle={abs(giza_angle-orion_angle):.2f}°")
 
-    # Compute shape params for all triplets
+    # Compute shape params for all triplets using canonical middle vertex:
+    # the vertex with the largest angle (the "bend" point)
     N = len(positions)
     print(f"\nComputing shape parameters for all C({N},3) triplets...")
     all_ratios = []
@@ -65,15 +66,20 @@ def run_information_content():
 
     for idx in combinations(range(N), 3):
         triplet = positions[list(idx)]
-        # Try all 3 possible "middle" points
+        # Find the vertex with the largest angle (the bend point)
+        best_angle = -1
+        best_r = 0
+        best_a = 0
         for mid in range(3):
-            reorder = [mid] + [i for i in range(3) if i != mid]
-            pts = triplet[reorder]
-            # Use middle point as vertex
-            pts_reord = np.array([pts[1], pts[0], pts[2]])
+            others = [i for i in range(3) if i != mid]
+            pts_reord = np.array([triplet[others[0]], triplet[mid], triplet[others[1]]])
             r, a = triangle_shape_params(pts_reord)
-            all_ratios.append(r)
-            all_angles.append(a)
+            if a > best_angle:
+                best_angle = a
+                best_r = r
+                best_a = a
+        all_ratios.append(best_r)
+        all_angles.append(best_a)
 
     all_ratios = np.array(all_ratios)
     all_angles = np.array(all_angles)

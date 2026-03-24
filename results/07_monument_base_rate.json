@@ -1,0 +1,166 @@
+{
+  "study": "07_monument_base_rate",
+  "n_stars": 162,
+  "n_triplets": 695520,
+  "n_sites": 12,
+  "n_significant_001": 2,
+  "n_significant_005": 3,
+  "sites": [
+    {
+      "site": "Giza (Khufu-Khafre-Menkaure)",
+      "asterism": "Orion Belt",
+      "stars": [
+        "Alnitak",
+        "Alnilam",
+        "Mintaka"
+      ],
+      "D": 0.0003427694977362166,
+      "rank": 1751,
+      "p_value": 0.002517540832758224,
+      "bh_corrected_p": 0.030210489993098687
+    },
+    {
+      "site": "Thornborough Henges",
+      "asterism": "Orion Belt",
+      "stars": [
+        "Alnitak",
+        "Alnilam",
+        "Mintaka"
+      ],
+      "D": 0.00143886609637026,
+      "rank": 3753,
+      "p_value": 0.005395962732919255,
+      "bh_corrected_p": 0.03237577639751553
+    },
+    {
+      "site": "Angkor (Angkor Wat-Bayon-Ta Prohm)",
+      "asterism": "Draco",
+      "stars": [
+        "Eltanin",
+        "Rastaban",
+        "Grumium"
+      ],
+      "D": 0.01950306896580054,
+      "rank": 17004,
+      "p_value": 0.024447895100069013,
+      "bh_corrected_p": 0.09779158040027607
+    },
+    {
+      "site": "Carnac Alignments",
+      "asterism": "Pleiades",
+      "stars": [
+        "Alcyone",
+        "Atlas",
+        "Electra"
+      ],
+      "D": 0.012850460650209707,
+      "rank": 37705,
+      "p_value": 0.05421123763515068,
+      "bh_corrected_p": 0.16263371290545203
+    },
+    {
+      "site": "Teotihuacan (Sun-Moon-Feathered Serpent)",
+      "asterism": "Pleiades",
+      "stars": [
+        "Alcyone",
+        "Atlas",
+        "Electra"
+      ],
+      "D": 0.023126965841920387,
+      "rank": 157191,
+      "p_value": 0.22600500345065563,
+      "bh_corrected_p": 0.5424120082815735
+    },
+    {
+      "site": "Avebury-Silbury-West Kennet",
+      "asterism": "Pleiades",
+      "stars": [
+        "Alcyone",
+        "Atlas",
+        "Electra"
+      ],
+      "D": 0.02974574339465883,
+      "rank": 252560,
+      "p_value": 0.36312399355877617,
+      "bh_corrected_p": 0.7262479871175523
+    },
+    {
+      "site": "Newgrange-Knowth-Dowth",
+      "asterism": "Orion Belt",
+      "stars": [
+        "Alnitak",
+        "Alnilam",
+        "Mintaka"
+      ],
+      "D": 0.055642432461563605,
+      "rank": 386445,
+      "p_value": 0.5556202553485162,
+      "bh_corrected_p": 0.952491866311742
+    },
+    {
+      "site": "Stonehenge-Woodhenge-Durrington",
+      "asterism": "Pleiades",
+      "stars": [
+        "Alcyone",
+        "Atlas",
+        "Electra"
+      ],
+      "D": 0.11256385369544798,
+      "rank": 481647,
+      "p_value": 0.6924991373360938,
+      "bh_corrected_p": 1.0
+    },
+    {
+      "site": "Easter Island (3 largest ahu)",
+      "asterism": "Orion Belt",
+      "stars": [
+        "Alnitak",
+        "Alnilam",
+        "Mintaka"
+      ],
+      "D": 0.07103661466520128,
+      "rank": 508022,
+      "p_value": 0.7304204048769266,
+      "bh_corrected_p": 0.9738938731692355
+    },
+    {
+      "site": "Xi'an Pyramids",
+      "asterism": "Big Dipper",
+      "stars": [
+        "Dubhe",
+        "Merak",
+        "Phecda"
+      ],
+      "D": 0.2098140792794724,
+      "rank": 510201,
+      "p_value": 0.7335533126293996,
+      "bh_corrected_p": 0.8802639751552797
+    },
+    {
+      "site": "Cahokia (Monks-Mound72-Fox)",
+      "asterism": "Orion Belt",
+      "stars": [
+        "Alnitak",
+        "Alnilam",
+        "Mintaka"
+      ],
+      "D": 0.2338501103509762,
+      "rank": 510331,
+      "p_value": 0.7337402231423971,
+      "bh_corrected_p": 0.8004438797917058
+    },
+    {
+      "site": "Tikal (Temples I-II-IV)",
+      "asterism": "Orion Belt",
+      "stars": [
+        "Alnitak",
+        "Alnilam",
+        "Mintaka"
+      ],
+      "D": 0.1990544402805997,
+      "rank": 635396,
+      "p_value": 0.9135553255118473,
+      "bh_corrected_p": 0.9135553255118473
+    }
+  ]
+}

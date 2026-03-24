@@ -1,0 +1,24 @@
+{
+  "study": "02_information_content",
+  "giza": {
+    "ratio": 0.9871983974278538,
+    "angle": 168.79968563162004
+  },
+  "orion": {
+    "ratio": 0.9787306263330182,
+    "angle": 172.44957748358425
+  },
+  "p_values": {
+    "ratio": 0.013190131124913733,
+    "angle": 0.06324620427881297,
+    "joint": 0.0007476420519898781,
+    "procrustes": 0.0025
+  },
+  "bits": {
+    "ratio": 6.24,
+    "angle": 3.98,
+    "joint": 10.39,
+    "procrustes": 8.64
+  },
+  "n_triplet_configs": 695520
+}

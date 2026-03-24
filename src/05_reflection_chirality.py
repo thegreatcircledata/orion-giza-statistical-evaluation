@@ -15,7 +15,7 @@ import numpy as np
 from itertools import combinations
 
 sys.path.insert(0, os.path.dirname(__file__))
-from shared_data import get_giza_triangle, load_bsc_catalog, procrustes_distance, ORION_BELT
+from shared_data import get_giza_triangle, load_bsc_catalog, procrustes_distance, ORION_BELT, fast_exhaustive_ranking
 
 
 RESULTS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "results")
@@ -30,12 +30,40 @@ def run_reflection_test():
     data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
     positions, names, mags = load_bsc_catalog(mag_limit=4.0, data_dir=data_dir)
     giza = get_giza_triangle()
-    orion = np.array([[ORION_BELT[s]["ra"], ORION_BELT[s]["dec"]]
-                      for s in ["Alnitak", "Alnilam", "Mintaka"]])
 
-    # Test Giza-Orion with and without reflection
-    D_reflect, R_reflect, _ = procrustes_distance(giza, orion, allow_reflection=True)
-    D_no_reflect, R_no_reflect, _ = procrustes_distance(giza, orion, allow_reflection=False)
+    # Use CATALOG coordinates for Orion (same as exhaustive ranking)
+    orion_indices = []
+    for sname in ["Alnitak", "Alnilam", "Mintaka"]:
+        for i, n in enumerate(names):
+            if sname.lower() in n.lower():
+                orion_indices.append(i)
+                break
+    orion = positions[orion_indices]
+
+    # Apply equirectangular projection (same as in fast_exhaustive_ranking)
+    mean_dec = orion[:, 1].mean()
+    orion_proj = orion.copy()
+    orion_proj[:, 0] *= np.cos(np.radians(mean_dec))
+
+    # Test Giza-Orion with and without reflection (best of 6 permutations)
+    D_reflect = float('inf')
+    R_reflect = None
+    D_no_reflect = float('inf')
+    R_no_reflect = None
+    best_perm_reflect = None
+    best_perm_no_reflect = None
+    for perm in [(0,1,2), (0,2,1), (1,0,2), (1,2,0), (2,0,1), (2,1,0)]:
+        op = orion_proj[list(perm)]
+        Dr, Rr, _ = procrustes_distance(giza, op, allow_reflection=True)
+        Dnr, Rnr, _ = procrustes_distance(giza, op, allow_reflection=False)
+        if Dr < D_reflect:
+            D_reflect = Dr
+            R_reflect = Rr
+            best_perm_reflect = perm
+        if Dnr < D_no_reflect:
+            D_no_reflect = Dnr
+            R_no_reflect = Rnr
+            best_perm_no_reflect = perm
 
     det_reflect = np.linalg.det(R_reflect)
     det_no_reflect = np.linalg.det(R_no_reflect)
@@ -48,39 +76,21 @@ def run_reflection_test():
     print(f"Rotation angle: {angle:.1f}°")
     print(f"Reflection needed: {'Yes' if det_reflect < 0 else 'No'}")
 
-    # Rank both modes across all triplets
-    print(f"\nRanking all triplets in both modes...")
+    # Rank both modes across all triplets (vectorized)
+    print(f"\nRanking all triplets in both modes (vectorized)...")
     N = len(positions)
     n_triplets = N * (N - 1) * (N - 2) // 6
 
-    D_all_reflect = []
-    D_all_no_reflect = []
-    n_top100_need_reflect = 0
-
-    for idx in combinations(range(N), 3):
-        triplet = positions[list(idx)]
-        best_r = float('inf')
-        best_nr = float('inf')
-
-        for perm in [(0,1,2), (0,2,1), (1,0,2), (1,2,0), (2,0,1), (2,1,0)]:
-            t = triplet[list(perm)]
-            Dr, Rr, _ = procrustes_distance(giza, t, allow_reflection=True)
-            Dnr, _, _ = procrustes_distance(giza, t, allow_reflection=False)
-            if Dr < best_r:
-                best_r = Dr
-            if Dnr < best_nr:
-                best_nr = Dnr
-
-        D_all_reflect.append(best_r)
-        D_all_no_reflect.append(best_nr)
-
-    D_all_reflect = np.array(D_all_reflect)
-    D_all_no_reflect = np.array(D_all_no_reflect)
+    print("  Mode 1: with reflection...")
+    D_all_reflect, _ = fast_exhaustive_ranking(giza, positions, allow_reflection=True)
+    print("  Mode 2: without reflection...")
+    D_all_no_reflect, _ = fast_exhaustive_ranking(giza, positions, allow_reflection=False)
 
     rank_reflect = int(np.sum(D_all_reflect < D_reflect)) + 1
     rank_no_reflect = int(np.sum(D_all_no_reflect < D_no_reflect)) + 1
 
     # Count how many top-100 (reflected mode) need reflection
+    n_top100_need_reflect = 0
     sorted_idx = np.argsort(D_all_reflect)[:100]
     for i in sorted_idx:
         if D_all_reflect[i] < D_all_no_reflect[i]:

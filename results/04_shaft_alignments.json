@@ -1,0 +1,141 @@
+{
+  "study": "04_shaft_alignments",
+  "construction_epoch": -2559,
+  "n_stars": 163,
+  "tolerance_deg": 2.0,
+  "shafts": {
+    "kings_south": {
+      "angle": 45.0,
+      "target_dec": -15.02,
+      "claimed_star": "Alnitak",
+      "claimed_found": true,
+      "n_matches": 7,
+      "best_matches": [
+        {
+          "name": "Alnilam",
+          "dec_at_epoch": -15.057,
+          "offset_deg": -0.034,
+          "vmag": 1.69
+        },
+        {
+          "name": "Larawag",
+          "dec_at_epoch": -15.315,
+          "offset_deg": -0.292,
+          "vmag": 2.29
+        },
+        {
+          "name": "Alnitak",
+          "dec_at_epoch": -15.349,
+          "offset_deg": -0.326,
+          "vmag": 1.77
+        },
+        {
+          "name": "Sadalsuud",
+          "dec_at_epoch": -14.619,
+          "offset_deg": 0.404,
+          "vmag": 2.91
+        },
+        {
+          "name": "Mintaka",
+          "dec_at_epoch": -14.576,
+          "offset_deg": 0.447,
+          "vmag": 2.23
+        }
+      ]
+    },
+    "kings_north": {
+      "angle": 32.5,
+      "target_dec": 87.48,
+      "claimed_star": "Thuban",
+      "claimed_found": true,
+      "n_matches": 1,
+      "best_matches": [
+        {
+          "name": "Thuban",
+          "dec_at_epoch": 88.713,
+          "offset_deg": 1.236,
+          "vmag": 3.65
+        }
+      ]
+    },
+    "queens_south": {
+      "angle": 39.5,
+      "target_dec": -20.52,
+      "claimed_star": "Sirius",
+      "claimed_found": false,
+      "n_matches": 9,
+      "best_matches": [
+        {
+          "name": "Lesath",
+          "dec_at_epoch": -20.694,
+          "offset_deg": -0.171,
+          "vmag": 2.69
+        },
+        {
+          "name": "Shaula",
+          "dec_at_epoch": -20.717,
+          "offset_deg": -0.194,
+          "vmag": 1.63
+        },
+        {
+          "name": "Tureis",
+          "dec_at_epoch": -21.017,
+          "offset_deg": -0.494,
+          "vmag": 2.78
+        },
+        {
+          "name": "Cursa",
+          "dec_at_epoch": -21.113,
+          "offset_deg": -0.59,
+          "vmag": 2.79
+        },
+        {
+          "name": "Iota Ori",
+          "dec_at_epoch": -19.529,
+          "offset_deg": 0.994,
+          "vmag": 2.77
+        }
+      ]
+    },
+    "queens_north": {
+      "angle": 39.0,
+      "target_dec": 80.98,
+      "claimed_star": "Kochab",
+      "claimed_found": true,
+      "n_matches": 2,
+      "best_matches": [
+        {
+          "name": "Kochab",
+          "dec_at_epoch": 80.245,
+          "offset_deg": -0.732,
+          "vmag": 2.08
+        },
+        {
+          "name": "Pherkad",
+          "dec_at_epoch": 80.228,
+          "offset_deg": -0.749,
+          "vmag": 3.05
+        }
+      ]
+    }
+  },
+  "epoch_sweep": {
+    "kings_south": {
+      "year": -2490,
+      "offset_deg": 0.0114
+    },
+    "kings_north": {
+      "year": -2340,
+      "offset_deg": 0.0021
+    },
+    "queens_south": {
+      "year": -1890,
+      "offset_deg": 0.0051
+    },
+    "queens_north": {
+      "year": -2350,
+      "offset_deg": 0.0043
+    }
+  },
+  "epoch_spread_years": 600
+}

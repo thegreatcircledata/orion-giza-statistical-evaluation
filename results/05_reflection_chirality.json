@@ -1,0 +1,18 @@
+{
+  "study": "05_reflection_chirality",
+  "n_stars": 162,
+  "n_triplets": 695520,
+  "giza_orion": {
+    "D_with_reflect": 0.00034165988523209077,
+    "D_without_reflect": 0.00034165988523209077,
+    "det_R_reflect": 0.9999999999999989,
+    "det_R_no_reflect": 0.9999999999999989,
+    "rotation_angle_deg": -92.7,
+    "reflection_needed": false
+  },
+  "rank_with_reflect": 1717,
+  "rank_without_reflect": 1381,
+  "p_with_reflect": 0.002469,
+  "p_without_reflect": 0.001986,
+  "top100_need_reflection": 57
+}

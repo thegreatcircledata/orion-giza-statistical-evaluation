@@ -1,0 +1,196 @@
+{
+  "study": "01_exhaustive_ranking",
+  "description": "Exhaustive Procrustes ranking of all stellar triplets vs Giza",
+  "n_stars": 162,
+  "n_triplets": 695520,
+  "mag_limit": 4.0,
+  "allow_reflection": true,
+  "orion_belt": {
+    "D": 0.00034165988523238155,
+    "rank": 1717,
+    "p_value": 0.0024686565447435012
+  },
+  "top_20": [
+    {
+      "rank": 1,
+      "D": 2.1377774661601734e-08,
+      "stars": [
+        "Achernar",
+        "Arneb",
+        "Subra"
+      ]
+    },
+    {
+      "rank": 2,
+      "D": 7.22722370838369e-08,
+      "stars": [
+        "Procyon",
+        "Algol",
+        "Algorab"
+      ]
+    },
+    {
+      "rank": 3,
+      "D": 1.2520025260975842e-07,
+      "stars": [
+        "Menkalinan",
+        "Seginus",
+        "Homam"
+      ]
+    },
+    {
+      "rank": 4,
+      "D": 1.2569598539791116e-07,
+      "stars": [
+        "Arcturus",
+        "Alnitak",
+        "Markab"
+      ]
+    },
+    {
+      "rank": 5,
+      "D": 3.6290257443560847e-07,
+      "stars": [
+        "Arneb",
+        "Muphrid",
+        "Matar"
+      ]
+    },
+    {
+      "rank": 6,
+      "D": 4.165905189701391e-07,
+      "stars": [
+        "Canopus",
+        "Denebola",
+        "Fafnir"
+      ]
+    },
+    {
+      "rank": 7,
+      "D": 5.250417935975804e-07,
+      "stars": [
+        "Arcturus",
+        "Rasalgethi",
+        "Chertan"
+      ]
+    },
+    {
+      "rank": 8,
+      "D": 6.271830195192507e-07,
+      "stars": [
+        "Sargas",
+        "Sadalbari",
+        "Algedi"
+      ]
+    },
+    {
+      "rank": 9,
+      "D": 7.368785375216902e-07,
+      "stars": [
+        "Rigil Kent",
+        "Wezen",
+        "Alpheratz"
+      ]
+    },
+    {
+      "rank": 10,
+      "D": 9.626057053679915e-07,
+      "stars": [
+        "Fomalhaut",
+        "Menkent",
+        "Nihal"
+      ]
+    },
+    {
+      "rank": 11,
+      "D": 9.710904711468515e-07,
+      "stars": [
+        "Arcturus",
+        "Elnath",
+        "Skat"
+      ]
+    },
+    {
+      "rank": 12,
+      "D": 1.068090018652157e-06,
+      "stars": [
+        "Alioth",
+        "Castor",
+        "Sheratan"
+      ]
+    },
+    {
+      "rank": 13,
+      "D": 1.3096629953857075e-06,
+      "stars": [
+        "Alphard",
+        "Sabik",
+        "Sheratan"
+      ]
+    },
+    {
+      "rank": 14,
+      "D": 1.3948015507025957e-06,
+      "stars": [
+        "Scheat",
+        "Zubenelgenubi",
+        "Wazn"
+      ]
+    },
+    {
+      "rank": 15,
+      "D": 1.481193891095245e-06,
+      "stars": [
+        "Arcturus",
+        "Bellatrix",
+        "Biham"
+      ]
+    },
+    {
+      "rank": 16,
+      "D": 1.4842206228493637e-06,
+      "stars": [
+        "Arcturus",
+        "Markab",
+        "Eta Ori"
+      ]
+    },
+    {
+      "rank": 17,
+      "D": 1.5062364866480493e-06,
+      "stars": [
+        "Sadr",
+        "Zubenelgenubi",
+        "Alsephina"
+      ]
+    },
+    {
+      "rank": 18,
+      "D": 1.533791085472913e-06,
+      "stars": [
+        "Alphard",
+        "Eltanin",
+        "Ankaa"
+      ]
+    },
+    {
+      "rank": 19,
+      "D": 1.6208947481999303e-06,
+      "stars": [
+        "Nunki",
+        "Kochab",
+        "Kornephoros"
+      ]
+    },
+    {
+      "rank": 20,
+      "D": 1.8158151058322858e-06,
+      "stars": [
+        "Aspidiske",
+        "Aludra",
+        "Cursa"
+      ]
+    }
+  ],
+  "elapsed_seconds": 1.0
+}

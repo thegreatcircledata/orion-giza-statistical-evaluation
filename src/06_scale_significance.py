@@ -13,7 +13,7 @@ import json, os, sys
 import numpy as np
 
 sys.path.insert(0, os.path.dirname(__file__))
-from shared_data import get_giza_triangle, get_orion_triangle, procrustes_distance
+from shared_data import get_giza_triangle_meters, get_orion_triangle, procrustes_distance
 
 RESULTS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "results")
 os.makedirs(RESULTS_DIR, exist_ok=True)
@@ -27,7 +27,7 @@ def run_scale_test():
     print("Study 6: Scale Significance Test")
     print("=" * 60)
 
-    giza = get_giza_triangle()
+    giza = get_giza_triangle_meters()
     orion = get_orion_triangle()
 
     # Observed scale
@@ -47,7 +47,9 @@ def run_scale_test():
 
     mc_scales = np.sort(mc_scales)
     percentile = 100 * np.searchsorted(mc_scales, obs_scale) / N_TRIALS
-    p_value = percentile / 100
+    # Two-sided p-value: scale could be unusually small OR large
+    p_one_sided = percentile / 100
+    p_value = 2 * min(p_one_sided, 1 - p_one_sided)
 
     print(f"\nResults:")
     print(f"  Observed scale: {obs_scale:.1f} m/rad")

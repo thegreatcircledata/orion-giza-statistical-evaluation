@@ -1,8 +1,8 @@
 """
 Fetch and filter the Yale Bright Star Catalogue (5th edition) for use in the analysis.
 
-Downloads the BSC from VizieR, filters to V < 4.0 and visibility from Giza latitude,
-and saves a clean CSV to data/bsc_mag4.csv.
+Downloads the BSC from VizieR via astroquery, filters to V < 4.0 and visibility
+from Giza latitude, and saves a clean CSV to data/bsc_mag4.csv.
 
 Usage:
     python src/fetch_catalog.py
@@ -12,67 +12,58 @@ Output:
 """
 import os
 import csv
-import urllib.request
-import re
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
 OUTPUT = os.path.join(DATA_DIR, "bsc_mag4.csv")
-
-# VizieR TAP query for BSC5 (catalog V/50)
-VIZIER_URL = (
-    "https://vizier.cds.unistra.fr/viz-bin/ase/tsv?"
-    "-source=V/50&-out=HR,Name,RAJ2000,DEJ2000,Vmag,SpType"
-    "&Vmag=<4.0&-out.max=unlimited"
-)
-
 GIZA_LAT = 29.977  # degrees
+DEC_LIMIT = -(90 - GIZA_LAT)  # -60.023 degrees
 
 
 def fetch_bsc():
-    """Download BSC from VizieR and save filtered catalog."""
+    """Download BSC from VizieR via astroquery and save filtered catalog."""
     os.makedirs(DATA_DIR, exist_ok=True)
 
-    print("Downloading Yale Bright Star Catalogue from VizieR...")
-    try:
-        req = urllib.request.Request(VIZIER_URL, headers={"User-Agent": "Python/OrionGiza"})
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            raw = resp.read().decode("utf-8")
-    except Exception as e:
-        print(f"Download failed: {e}")
-        print("Please download the BSC manually from VizieR (catalog V/50)")
-        print(f"and save a CSV with columns: hr,name,ra_deg,dec_deg,vmag,spectral_type")
-        print(f"to: {OUTPUT}")
+    print("Downloading Yale Bright Star Catalogue from VizieR via astroquery...")
+    from astroquery.vizier import Vizier
+    from astropy.coordinates import SkyCoord
+    import astropy.units as u
+
+    # Query BSC5 (catalog V/50) for all stars with Vmag < 4.0
+    v = Vizier(columns=["HR", "Name", "RAJ2000", "DEJ2000", "Vmag", "SpType"],
+               row_limit=-1)
+    v.column_filters = {"Vmag": "<4.0"}
+    result = v.get_catalogs("V/50")
+
+    if not result or len(result) == 0:
+        print("ERROR: No results from VizieR query.")
         return False
 
-    # Parse TSV (skip header lines starting with #)
-    lines = [l for l in raw.strip().split("\n") if not l.startswith("#") and l.strip()]
-    if len(lines) < 2:
-        print("Unexpected response format. Attempting alternative parse...")
-        return False
+    table = result[0]
+    print(f"VizieR returned {len(table)} rows")
+
+    # Convert sexagesimal RA/Dec to degrees
+    coords = SkyCoord(table["RAJ2000"], table["DEJ2000"],
+                      unit=(u.hourangle, u.deg), frame="fk5")
+    ra_deg = coords.ra.deg
+    dec_deg = coords.dec.deg
 
     stars = []
-    for line in lines[2:]:  # Skip header + separator
-        parts = line.split("\t")
-        if len(parts) < 5:
-            continue
+    for i, row in enumerate(table):
         try:
-            hr = parts[0].strip()
-            name = parts[1].strip() if len(parts) > 1 else f"HR{hr}"
-            ra = float(parts[2].strip())
-            dec = float(parts[3].strip())
-            vmag = float(parts[4].strip())
-            sptype = parts[5].strip() if len(parts) > 5 else ""
-        except (ValueError, IndexError):
+            hr = str(row["HR"])
+            name = str(row["Name"]).strip() if row["Name"] else f"HR{hr}"
+            ra = float(ra_deg[i])
+            dec = float(dec_deg[i])
+            vmag = float(row["Vmag"])
+            sptype = str(row["SpType"]).strip() if row["SpType"] else ""
+        except (ValueError, KeyError):
             continue
 
-        # Filter: visible from Giza (dec > -(90 - lat) = -60.023)
-        if dec < -(90 - GIZA_LAT):
+        # Filter: visible from Giza (dec > -60.023°)
+        if dec < DEC_LIMIT:
             continue
-        # Filter: never rises above horizon (circumpolar below)
-        # A star is visible if dec > -(90 - lat)
-        # Already filtered above
 
-        if not name or name == "":
+        if not name or name == "" or name == "--":
             name = f"HR{hr}"
 
         stars.append({
@@ -81,7 +72,7 @@ def fetch_bsc():
             "spectral_type": sptype
         })
 
-    print(f"Downloaded {len(stars)} stars with V < 4.0 visible from Giza latitude")
+    print(f"Filtered to {len(stars)} stars with V < 4.0 visible from Giza latitude (dec > {DEC_LIMIT:.1f}°)")
 
     with open(OUTPUT, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=["hr", "name", "ra_deg", "dec_deg", "vmag", "spectral_type"])

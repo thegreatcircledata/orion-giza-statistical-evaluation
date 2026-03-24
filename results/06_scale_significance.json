@@ -1,0 +1,9 @@
+{
+  "study": "06_scale_significance",
+  "observed_scale_m_per_rad": 352.6,
+  "mc_trials": 10000,
+  "plateau_size_m": 2000,
+  "mc_median": 576.9,
+  "percentile": 10.8,
+  "p_value": 0.2166
+}

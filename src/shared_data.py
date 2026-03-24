@@ -63,8 +63,35 @@ def latlon_to_local(lat, lon, ref_lat=None, ref_lon=None):
     return x, y
 
 
+def to_cartesian(coords):
+    """
+    Convert (lat, lon) pairs to centered equirectangular Cartesian.
+
+    Uses simple equirectangular projection centered on the mean:
+      x = (lon - mean_lon) * cos(mean_lat)
+      y = lat - mean_lat
+
+    This matches the projection used for sky coordinates (RA/Dec),
+    ensuring consistent shape comparison in Procrustes analysis.
+    """
+    pts = np.array(coords, dtype=float)
+    mean_lat = pts[:, 0].mean()
+    mean_lon = pts[:, 1].mean()
+    cos_lat = np.cos(np.radians(mean_lat))
+    x = (pts[:, 1] - mean_lon) * cos_lat
+    y = pts[:, 0] - mean_lat
+    return np.column_stack([x, y])
+
+
 def get_giza_triangle():
-    """Return Giza pyramid positions as Nx2 array in local meters."""
+    """Return Giza pyramid positions as Nx2 array in equirectangular Cartesian."""
+    coords = [(PYRAMIDS[n]["lat"], PYRAMIDS[n]["lon"])
+              for n in ["Khufu", "Khafre", "Menkaure"]]
+    return to_cartesian(coords)
+
+
+def get_giza_triangle_meters():
+    """Return Giza pyramid positions in local meters (for scale analysis)."""
     points = []
     for name in ["Khufu", "Khafre", "Menkaure"]:
         p = PYRAMIDS[name]
@@ -171,6 +198,91 @@ def exhaustive_procrustes(target, star_positions, star_names=None, allow_reflect
 
     results.sort(key=lambda x: x[0])
     return results
+
+
+def fast_exhaustive_ranking(target, positions, allow_reflection=True, project_sky=True):
+    """
+    Vectorized exhaustive Procrustes ranking — much faster than the loop version.
+
+    Uses analytical 2x2 SVD: for M = t^T @ s (2x2),
+      D_reflect = 2 - 2*sqrt(||M||_F^2 + 2*|det(M)|)
+      D_no_reflect = 2 - 2*sqrt(||M||_F^2 + 2*det(M))
+
+    Parameters:
+        target: 3x2 array (reference shape, assumed already in Cartesian)
+        positions: Nx2 array of point positions (RA, Dec in degrees if sky)
+        allow_reflection: whether to allow mirror reflection
+        project_sky: if True, apply equirectangular projection per triplet
+                     (scale RA by cos(mean_dec) for each triplet). This is
+                     necessary for correct shape comparison on the celestial sphere.
+
+    Returns:
+        all_D: array of shape (n_triplets,) — best D per triplet
+        indices: array of shape (n_triplets, 3) — triplet index combinations
+    """
+    N = len(positions)
+
+    # Center and normalize target
+    t = target - target.mean(axis=0)
+    t_norm = np.sqrt((t ** 2).sum())
+    t = t / t_norm  # (3, 2)
+
+    # Generate all triplet indices
+    indices = np.array(list(combinations(range(N), 3)))  # (M, 3)
+    M_count = len(indices)
+
+    # Build all triplets once (before projection)
+    all_triplets_raw = positions[indices]  # (M_count, 3, 2) where [:,:,0]=RA, [:,:,1]=Dec
+
+    # Apply equirectangular projection if working with sky coordinates
+    if project_sky:
+        all_triplets = all_triplets_raw.copy()
+        mean_dec = all_triplets[:, :, 1].mean(axis=1, keepdims=True)  # (M_count, 1)
+        cos_dec = np.cos(np.radians(mean_dec))  # (M_count, 1)
+        all_triplets[:, :, 0] = all_triplets[:, :, 0] * cos_dec  # scale RA
+    else:
+        all_triplets = all_triplets_raw
+
+    # All 6 permutations of 3 elements
+    perms = np.array([(0,1,2), (0,2,1), (1,0,2), (1,2,0), (2,0,1), (2,1,0)])
+
+    best_D = np.full(M_count, np.inf)
+
+    for perm in perms:
+        # Build permuted triplets: (M_count, 3, 2)
+        triplets = all_triplets[:, perm, :]
+
+        # Center each triplet
+        means = triplets.mean(axis=1, keepdims=True)  # (M_count, 1, 2)
+        centered = triplets - means
+
+        # Normalize each triplet to unit Frobenius norm
+        norms = np.sqrt((centered ** 2).sum(axis=(1, 2), keepdims=True))
+        norms = np.maximum(norms, 1e-15)
+        normalized = centered / norms  # (M_count, 3, 2)
+
+        # Compute M = t.T @ s_i for each triplet: (2,3) @ (M_count,3,2) -> (M_count,2,2)
+        M_batch = np.einsum('ji,mjk->mik', t, normalized)
+
+        # Analytical 2x2 SVD
+        # frob^2 = sum of squared elements
+        frob_sq = (M_batch ** 2).sum(axis=(1, 2))  # (M_count,)
+        # det(M) = ad - bc
+        det = (M_batch[:, 0, 0] * M_batch[:, 1, 1]
+             - M_batch[:, 0, 1] * M_batch[:, 1, 0])  # (M_count,)
+
+        if allow_reflection:
+            inner = frob_sq + 2 * np.abs(det)
+        else:
+            inner = frob_sq + 2 * det
+
+        inner = np.clip(inner, 0, None)
+        D_perm = 2 - 2 * np.sqrt(inner)
+        D_perm = np.maximum(D_perm, 0)
+
+        best_D = np.minimum(best_D, D_perm)
+
+    return best_D, indices
 
 
 # ─── Star catalog loading ─────────────────────────────────────

@@ -24,7 +24,7 @@ from itertools import combinations
 sys.path.insert(0, os.path.dirname(__file__))
 from shared_data import (
     get_giza_triangle, procrustes_distance,
-    load_bsc_catalog, ORION_BELT
+    load_bsc_catalog, ORION_BELT, fast_exhaustive_ranking
 )
 
 RESULTS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "results")
@@ -75,51 +75,24 @@ def run_exhaustive_ranking():
         print("  WARNING: Could not find all 3 Orion Belt stars!")
         print(f"  Found: {orion_idx}")
 
-    # Exhaustive enumeration
-    print(f"\nEnumerating all {n_triplets:,} triplets...")
+    # Exhaustive enumeration (vectorized)
+    print(f"\nEnumerating all {n_triplets:,} triplets (vectorized)...")
     t0 = time.time()
 
-    all_D = []
-    orion_D = None
-    orion_rank = None
-
-    # For efficiency, compute all at once
-    count = 0
-    report_interval = 100000
-    triplet_combos = list(combinations(range(N), 3))
-
-    for idx in triplet_combos:
-        triplet = positions[list(idx)]
-
-        # Try all 6 permutations, keep best D
-        best_D = float('inf')
-        for perm in [(0,1,2), (0,2,1), (1,0,2), (1,2,0), (2,0,1), (2,1,0)]:
-            t = triplet[list(perm)]
-            D, _, _ = procrustes_distance(giza, t, allow_reflection=True)
-            if D < best_D:
-                best_D = D
-
-        all_D.append(best_D)
-
-        # Check if this is the Orion triplet
-        idx_set = set(idx)
-        orion_set = set(orion_idx.values())
-        if idx_set == orion_set:
-            orion_D = best_D
-
-        count += 1
-        if count % report_interval == 0:
-            elapsed = time.time() - t0
-            rate = count / elapsed
-            eta = (n_triplets - count) / rate
-            print(f"  {count:,} / {n_triplets:,} ({100*count/n_triplets:.1f}%) "
-                  f"- {rate:.0f} triplets/sec - ETA {eta:.0f}s")
+    all_D, triplet_indices = fast_exhaustive_ranking(giza, positions, allow_reflection=True)
 
     elapsed = time.time() - t0
     print(f"\nCompleted in {elapsed:.1f}s ({n_triplets/elapsed:.0f} triplets/sec)")
 
+    # Find Orion Belt triplet
+    orion_set = set(orion_idx.values())
+    orion_D = None
+    for k, idx in enumerate(triplet_indices):
+        if set(idx) == orion_set:
+            orion_D = float(all_D[k])
+            break
+
     # Sort and rank
-    all_D = np.array(all_D)
     sorted_D = np.sort(all_D)
 
     if orion_D is not None:
@@ -134,15 +107,16 @@ def run_exhaustive_ranking():
         print(f"{'='*60}")
     else:
         print("\nWARNING: Orion Belt triplet not found in enumeration!")
+        orion_rank = None
 
     # Top 20 matches
     top20 = []
-    sorted_indices = np.argsort(all_D)
-    for i in range(min(20, len(sorted_indices))):
-        idx_combo = triplet_combos[sorted_indices[i]]
+    sorted_indices_order = np.argsort(all_D)
+    for i in range(min(20, len(sorted_indices_order))):
+        idx_combo = triplet_indices[sorted_indices_order[i]]
         top20.append({
             "rank": i + 1,
-            "D": float(all_D[sorted_indices[i]]),
+            "D": float(all_D[sorted_indices_order[i]]),
             "stars": [names[j] for j in idx_combo],
         })
 

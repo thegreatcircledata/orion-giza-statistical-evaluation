@@ -60,14 +60,30 @@ def run_shaft_analysis():
     data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
     positions, names, mags = load_bsc_catalog(mag_limit=4.0, data_dir=data_dir)
 
+    # Add supplementary stars needed for shaft analysis but missing from main catalog
+    SUPPLEMENT = {
+        "Thuban":  (211.097, 64.376, 3.65),  # α Dra (J2000)
+    }
+    for sname, (ra, dec, vmag) in SUPPLEMENT.items():
+        if sname not in names:
+            positions = np.vstack([positions, [[ra, dec]]])
+            names.append(sname)
+            mags.append(vmag)
+            print(f"  Added supplementary star: {sname} (mag {vmag})")
+
     # Compute shaft target declinations
     lat = GIZA_LATITUDE
     targets = {}
     for shaft, angle in SHAFT_ANGLES.items():
         if "south" in shaft:
-            dec = -(90 - lat - angle)  # Below celestial equator
+            # South shaft at altitude θ: transit altitude = 90 - (lat - dec)
+            # So: θ = 90 - lat + dec → dec = θ + lat - 90
+            dec = angle + lat - 90  # e.g. 45 + 29.977 - 90 = -15.023°
         else:
-            dec = 90 - (90 - lat - angle)  # Near pole
+            # North shaft at altitude θ pointing at star transiting above pole:
+            # transit altitude = 90 - (dec - lat) → θ = 90 - dec + lat
+            # So: dec = 90 + lat - θ
+            dec = 90 + lat - angle  # e.g. 90 + 29.977 - 32.5 = 87.477° (Thuban)
         targets[shaft] = {"angle": angle, "target_dec": dec, "claimed": SHAFT_CLAIMS[shaft]}
 
     print(f"\nShaft target declinations at lat={lat}°:")
@@ -78,10 +94,8 @@ def run_shaft_analysis():
     print(f"\nPropagating {len(positions)} stars to {abs(CONSTRUCTION_EPOCH)} BCE...")
 
     # Use astropy for precession
-    epoch_str = f"J{2000 + CONSTRUCTION_EPOCH + 2000}"  # Approximate Julian epoch
-    # Better: use Julian date directly
-    # 2560 BCE = -2559 CE. J2000 = 2000.0. Delta = -4559 years.
-    target_epoch = Time(2000.0 + CONSTRUCTION_EPOCH, format='jyear', scale='tt')
+    # 2560 BCE = astronomical year -2559 = Julian year -2559
+    target_epoch = Time(CONSTRUCTION_EPOCH, format='jyear', scale='tt')
 
     coords_j2000 = SkyCoord(ra=positions[:, 0]*u.deg, dec=positions[:, 1]*u.deg,
                              frame=FK5(equinox='J2000'))
@@ -131,7 +145,7 @@ def run_shaft_analysis():
         best_epoch = None
 
         for year in range(-3500, -1500, 10):
-            t = Time(2000.0 + year, format='jyear', scale='tt')
+            t = Time(year, format='jyear', scale='tt')
             frame = FK5(equinox=t)
             coords = coords_j2000.transform_to(frame)
 
