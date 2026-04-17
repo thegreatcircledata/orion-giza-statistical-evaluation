@@ -1,8 +1,13 @@
 # Orion–Giza Statistical Evaluation
 
+**Institute:** [Deep Time Research Institute](https://deeptime-research.org)
+**Author:** Elliot Allan — elliot@deeptime-research.org — ORCID [0009-0008-8541-0944](https://orcid.org/0009-0008-8541-0944)
+
+> ⚠️ This repository is under active revision. The analysis described here corresponds to the manuscript currently under review. An earlier version targeted Journal of Astronomical History and Heritage; the current submission is at Journal of Astronomy in Culture.
+
 Reproducibility package for:
 
-> Allan, E. (2026). "A comprehensive statistical evaluation of the Orion–Giza correlation." *Submitted to Journal of Astronomical History and Heritage.*
+> Allan, E. (2026). *A comprehensive statistical evaluation of the Orion–Giza correlation.* Deep Time Research Institute. Submitted to *Journal of Astronomy in Culture*.
 
 ## What this is
 
@@ -41,7 +46,7 @@ The first exhaustive statistical evaluation of Bauval's (1989) Orion Correlation
 
 ```bash
 # Clone and install dependencies
-git clone https://github.com/YOUR_USERNAME/orion-giza-statistical-evaluation.git
+git clone https://github.com/thegreatcircledata/orion-giza-statistical-evaluation.git
 cd orion-giza-statistical-evaluation
 pip install -r requirements.txt
 
@@ -80,16 +85,18 @@ Claude (Anthropic) was used as a computational research assistant for code gener
 
 ## License
 
-MIT
+MIT. The corresponding author is affiliated with the Deep Time Research Institute, a registered 501(c)(3) nonprofit research organisation.
 
 ## Citation
 
 ```bibtex
 @article{allan2026orion,
-  author  = {Allan, Elliot},
-  title   = {A comprehensive statistical evaluation of the {Orion}--{Giza} correlation},
-  journal = {Journal of Astronomical History and Heritage},
-  year    = {2026},
-  note    = {Submitted}
+  author       = {Allan, Elliot},
+  title        = {A comprehensive statistical evaluation of the {Orion}--{Giza} correlation},
+  journal      = {Journal of Astronomy in Culture},
+  year         = {2026},
+  note         = {Submitted},
+  organization = {Deep Time Research Institute},
+  orcid        = {0009-0008-8541-0944}
 }
 ```
