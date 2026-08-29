@@ -3,11 +3,11 @@
 **Institute:** [Deep Time Research Institute](https://deeptime-research.org)
 **Author:** Elliot Allan — elliot@deeptime-research.org — ORCID [0009-0008-8541-0944](https://orcid.org/0009-0008-8541-0944)
 
-> ⚠️ This repository is under active revision. The analysis described here corresponds to the manuscript currently under review. An earlier version targeted Journal of Astronomical History and Heritage; the current submission is at Journal of Astronomy in Culture.
+> Published as: Allan, E. (2026). A comprehensive statistical evaluation of the Orion–Giza correlation. *Journal of Astronomical History and Heritage*, 29(2), 367–378. DOI [10.3724/SP.J.1440-2807.2026.02.06](https://doi.org/10.3724/SP.J.1440-2807.2026.02.06)
 
 Reproducibility package for:
 
-> Allan, E. (2026). *A comprehensive statistical evaluation of the Orion–Giza correlation.* Deep Time Research Institute. Submitted to *Journal of Astronomy in Culture*.
+> Allan, E. (2026). *A comprehensive statistical evaluation of the Orion–Giza correlation.* Journal of Astronomical History and Heritage, 29(2), 367–378.
 
 ## What this is
 
@@ -93,9 +93,12 @@ MIT. The corresponding author is affiliated with the Deep Time Research Institut
 @article{allan2026orion,
   author       = {Allan, Elliot},
   title        = {A comprehensive statistical evaluation of the {Orion}--{Giza} correlation},
-  journal      = {Journal of Astronomy in Culture},
+  journal      = {Journal of Astronomical History and Heritage},
+  volume       = {29},
+  number       = {2},
+  pages        = {367--378},
   year         = {2026},
-  note         = {Submitted},
+  doi          = {10.3724/SP.J.1440-2807.2026.02.06},
   organization = {Deep Time Research Institute},
   orcid        = {0009-0008-8541-0944}
 }
